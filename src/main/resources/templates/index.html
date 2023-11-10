@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Index</title>
+
+  <style>
+    .post {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <a href="./write.html">글쓰기</a>
+  <div id="post-list">Loading data...</div>
+  <!-- 데이터를 불러오는 동안 시간이 걸리는데, 그럴 때 View에서 출력될 메시지 이다. -->
+
+  <script type="text/javascript">
+    const $postList = document.getElementById('post-list');
+    // $postList에 $의 의미 : 변수명 앞의 $는 해당 변수가 DOM 요소를 나타낸다는 의미일 뿐이지,
+    // 특별한 기능을 하거나 JQuery를 의미하는 것은 아니다.
+
+    const fetchPosts = async () => {
+      // fetchPosts는 비동기적으로 데이터를 가져오는 함수이다.
+
+      const res = await fetch('http://192.168.0.12:8080/api/board', { method: 'GET' });
+      // fetch 함수는 네트워크를 통해 리소스를 가져오는데 사용된다.
+      // 여기서는 http://192.168.0.12:8080/api/board 에서 GET 메서드로 데이터를 가져오도록 요청한다.
+      // await 키워드는 비동기적으로 데이터를 가져오는 작업이 완료될 때까지 기다리도록 하는데,
+      // 이는 비동기 프로그래밍에서 결과를 기다리는 효과를 나타낸다.
+      // 위에 적혀 있는 IP 주소는 CMD -> IPCONFIG -> IPV4의 주소이다.
+
+      const data = await res.json();
+      // 앞에서 가져온 board 데이터들을 JSON 형태로 파싱한다.
+      // await 키워드를 사용해 JSON 데이터가 파싱될 때까지 기다린다.
+      return data;
+    };
+
+
+
+    const renderPosts = async () => {
+      const data = await fetchPosts();
+      // 앞에서 정의한 const fetchPosts 함수를 호출하여 데이터를 가져올 때까지 기다린다.
+      const postTags = data.map(
+        (post) => `
+          <div class="post">
+            <h2>${post.title}</h2>
+            <p>${post.contents}</p>
+          </div>
+        `
+        // JS에서 배열은 동적으로 크기가 조정되고 선언되기 때문에 자바의 String[] data 처럼 별도의 표시가 필요없다.
+        // const data로 불러온 데이터를 map 메서드를 사용해 map 형태로 반복하여 입력한다.
+      );
+      $postList.innerHTML = postTags.join('');
+      // .join을 사용해 배열안의 데이터를 문자열로 합친다.
+    };
+
+    renderPosts();
+    // renderPosts 함수를 호출
+  </script>
+</body>
+
+</html>

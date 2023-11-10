@@ -19,5 +19,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     // Long은 앞서 정의한 엔티티 클래스의 기본 키 (Primary Key)의 타입을 나타낸다.
 
     List<Board> findAllByOrderByModifiedAtDesc();
-
 }
